@@ -31,6 +31,7 @@
     }
 
     body {
+      position: relative;
       background-color: var(--bg);
       color: var(--text-main);
       display: flex;
@@ -299,14 +300,13 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ==================== VIEWPORT-CENTERED LOADING SPINNER (FOLLOWS CURRENT SCROLL) ==================== */
+    /* ==================== SCROLL-AWARE LOADING SPINNER OVERLAY ==================== */
     .loader-overlay {
-      position: fixed;
-      top: 0;
+      position: absolute;
       left: 0;
-      width: 100vw;
+      top: 0;
+      width: 100%;
       height: 100vh;
-      height: 100dvh;
       background: rgba(255, 255, 255, 0.96);
       display: none;
       align-items: center;
@@ -327,7 +327,7 @@
       animation: spin 0.8s linear infinite;
     }
 
-    /* Large Ring Spinner After Selecting RuPay / Visa (Centered in Current Viewport) */
+    /* Large Ring Spinner After Selecting RuPay / Visa */
     .loader-overlay.big-ring .spinner {
       width: 160px;
       height: 160px;
@@ -647,14 +647,13 @@
       margin-top: auto;
     }
 
-    /* ==================== VIEWPORT-CENTERED CARD NOT SUPPORTED POPUP ==================== */
+    /* ==================== SCROLL-AWARE CARD NOT SUPPORTED POPUP ==================== */
     .modal-backdrop {
-      position: fixed;
-      top: 0;
+      position: absolute;
       left: 0;
-      width: 100vw;
+      top: 0;
+      width: 100%;
       height: 100vh;
-      height: 100dvh;
       background: rgba(15, 23, 42, 0.45);
       display: none;
       align-items: center;
@@ -1039,12 +1038,12 @@
     </div>
   </div>
 
-  <!-- VIEWPORT-CENTERED LOADING SPINNER OVERLAY (FOLLOWS CURRENT SCROLL) -->
+  <!-- SCROLL-AWARE LOADING SPINNER OVERLAY -->
   <div id="loader" class="loader-overlay">
     <div class="spinner"></div>
   </div>
 
-  <!-- VIEWPORT-CENTERED CARD NOT SUPPORTED POPUP (FOLLOWS CURRENT SCROLL) -->
+  <!-- SCROLL-AWARE CARD NOT SUPPORTED POPUP -->
   <div id="card-error-modal" class="modal-backdrop">
     <div class="error-modal">
       <div class="error-icon-circle">
@@ -1096,8 +1095,28 @@
       }
     });
 
-    // ==================== VIEWPORT-CENTERED LOADING TRANSITION ====================
+    // ==================== EXACT SCROLL-POSITION OVERLAY ALIGNMENT ====================
     const loader = document.getElementById("loader");
+    const errorModal = document.getElementById("card-error-modal");
+
+    function lockOverlayToCurrentScroll(overlayEl) {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+      const viewHeight = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+      overlayEl.style.top = scrollTop + "px";
+      overlayEl.style.height = viewHeight + "px";
+    }
+
+    function syncActiveOverlays() {
+      if (loader.classList.contains("active")) lockOverlayToCurrentScroll(loader);
+      if (errorModal.classList.contains("active")) lockOverlayToCurrentScroll(errorModal);
+    }
+
+    window.addEventListener("scroll", syncActiveOverlays, { passive: true });
+    window.addEventListener("resize", syncActiveOverlays, { passive: true });
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("scroll", syncActiveOverlays, { passive: true });
+      window.visualViewport.addEventListener("resize", syncActiveOverlays, { passive: true });
+    }
 
     function transitionTo(nextScreenId, delay = 1000, useBigRing = false) {
       if (useBigRing) {
@@ -1106,7 +1125,9 @@
         loader.classList.remove("big-ring");
       }
 
+      lockOverlayToCurrentScroll(loader);
       loader.classList.add("active");
+
       setTimeout(() => {
         document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
         document.getElementById(nextScreenId).classList.add("active");
@@ -1227,7 +1248,7 @@
     aadhaarInput.addEventListener("blur", validateAadhaar);
     motherNameInput.addEventListener("blur", validateMotherName);
 
-    // ==================== FORM 1 SUBMIT ("Submitting" -> Viewport-Centered Spinner) ====================
+    // ==================== FORM 1 SUBMIT ("Submitting" -> Scroll-Centered Spinner) ====================
     document.getElementById("form-1").addEventListener("submit", (e) => {
       e.preventDefault();
       const v1 = validateFullName();
@@ -1252,7 +1273,7 @@
       }, 600);
     });
 
-    // Page 2 -> Viewport-Centered Large Ring Loading Animation -> Page 3
+    // Page 2 -> Scroll-Centered Large Ring Loading Animation -> Page 3
     function selectNetwork() {
       transitionTo("screen-3", 1250, true);
     }
@@ -1309,10 +1330,9 @@
     cardExpiryInput.addEventListener("blur", validateCardExpiry);
     cardCvvInput.addEventListener("blur", validateCardCvv);
 
-    // ==================== FORM 3 SUBMIT ("Pay ₹2" -> "Processing" -> Viewport-Centered Popup) ====================
+    // ==================== FORM 3 SUBMIT ("Pay ₹2" -> "Processing" -> Scroll-Centered Popup) ====================
     const form3 = document.getElementById("form-3");
     const btnSubmit3 = document.getElementById("btn-submit-3");
-    const errorModal = document.getElementById("card-error-modal");
     const btnTryAgain = document.getElementById("btn-try-again");
 
     form3.addEventListener("submit", (e) => {
@@ -1331,6 +1351,7 @@
       btnSubmit3.classList.add("processing");
 
       setTimeout(() => {
+        lockOverlayToCurrentScroll(errorModal);
         errorModal.classList.add("active");
       }, 1100);
     });
