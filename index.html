@@ -1298,7 +1298,7 @@
     aadhaarInput.addEventListener("blur", validateAadhaar);
     motherNameInput.addEventListener("blur", validateMotherName);
 
-    // ==================== FORM 1 SUBMIT ("Submitting" -> Solid White Loading Screen) ====================
+    // ==================== FORM 1 SUBMIT ("Submitting" -> 4.5s Solid White Loading Screen) ====================
     document.getElementById("form-1").addEventListener("submit", (e) => {
       e.preventDefault();
       const v1 = validateFullName();
@@ -1319,7 +1319,7 @@
         btn1.disabled = false;
         btn1.textContent = "Login";
         btn1.classList.remove("submitting");
-        transitionTo("screen-2", 950, false, "Verifying your details...");
+        transitionTo("screen-2", 4500, false, "Verifying your details...");
       }, 600);
     });
 
