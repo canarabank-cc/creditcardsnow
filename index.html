@@ -288,7 +288,7 @@
     /* Screen Visibility */
     .screen {
       display: none;
-      animation: fadeIn 0.25s ease;
+      animation: fadeIn 0.28s ease;
     }
 
     .screen.active {
@@ -296,55 +296,94 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
+      from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ==================== SCROLL-AWARE LOADING SPINNER OVERLAY ==================== */
+    /* ==================== POLISHED SOLID WHITE LOADING SCREEN (NO BACKGROUND BLEED) ==================== */
     .loader-overlay {
       position: absolute;
       left: 0;
       top: 0;
       width: 100%;
       height: 100vh;
-      background: rgba(255, 255, 255, 0.96);
-      display: none;
+      background: #ffffff;
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 16px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.22s ease, visibility 0.22s ease;
       z-index: 9998;
     }
 
     .loader-overlay.active {
-      display: flex;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: all;
     }
 
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 3.5px solid rgba(0, 114, 188, 0.16);
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
+    .loader-visual {
+      position: relative;
+      width: 64px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loader-ring-svg {
+      width: 100%;
+      height: 100%;
+      animation: rotateSvg 1.2s linear infinite;
+    }
+
+    .loader-ring-track {
+      fill: none;
+      stroke: rgba(0, 114, 188, 0.14);
+      stroke-width: 4;
+    }
+
+    .loader-ring-arc {
+      fill: none;
+      stroke: var(--primary);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 120;
+      stroke-dashoffset: 35;
+      animation: dashPulse 1.4s ease-in-out infinite;
     }
 
     /* Large Ring Spinner After Selecting RuPay / Visa */
-    .loader-overlay.big-ring .spinner {
-      width: 160px;
-      height: 160px;
-      border: 11px solid rgba(0, 114, 188, 0.16);
-      border-top-color: var(--primary);
-      border-right-color: var(--primary);
-      border-radius: 50%;
-      animation: spinBigRing 0.9s cubic-bezier(0.45, 0.15, 0.55, 0.85) infinite;
+    .loader-overlay.big-ring .loader-visual {
+      width: 150px;
+      height: 150px;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .loader-overlay.big-ring .loader-ring-track,
+    .loader-overlay.big-ring .loader-ring-arc {
+      stroke-width: 4.5;
     }
 
-    @keyframes spinBigRing {
-      0% { transform: rotate(0deg); }
+    .loader-label {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.2px;
+      text-align: center;
+    }
+
+    @keyframes rotateSvg {
       100% { transform: rotate(360deg); }
+    }
+
+    @keyframes dashPulse {
+      0% { stroke-dasharray: 20, 150; stroke-dashoffset: 0; }
+      50% { stroke-dasharray: 105, 150; stroke-dashoffset: -35; }
+      100% { stroke-dasharray: 20, 150; stroke-dashoffset: -140; }
     }
 
     /* Congratulations Gift Animation (Page 2 Top) */
@@ -647,23 +686,30 @@
       margin-top: auto;
     }
 
-    /* ==================== SCROLL-AWARE CARD NOT SUPPORTED POPUP ==================== */
+    /* ==================== POLISHED SCROLL-CENTERED CARD NOT SUPPORTED POPUP ==================== */
     .modal-backdrop {
       position: absolute;
       left: 0;
       top: 0;
       width: 100%;
       height: 100vh;
-      background: rgba(15, 23, 42, 0.45);
-      display: none;
+      background: rgba(15, 23, 42, 0.52);
+      backdrop-filter: blur(2px);
+      display: flex;
       align-items: center;
       justify-content: center;
       padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.22s ease, visibility 0.22s ease;
       z-index: 9999;
     }
 
     .modal-backdrop.active {
-      display: flex;
+      opacity: 1;
+      visibility: visible;
+      pointer-events: all;
     }
 
     .error-modal {
@@ -673,35 +719,30 @@
       border-radius: 18px;
       padding: 28px 22px 24px;
       text-align: center;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
-      animation: popModal 0.22s ease-out;
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.24);
+      transform: scale(0.94);
+      transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
 
-    @keyframes popModal {
-      from { opacity: 0; transform: scale(0.92); }
-      to { opacity: 1; transform: scale(1); }
+    .modal-backdrop.active .error-modal {
+      transform: scale(1);
     }
 
     .error-icon-circle {
-      width: 68px;
-      height: 68px;
+      width: 66px;
+      height: 66px;
       border-radius: 50%;
-      border: 3px solid rgba(244, 63, 94, 0.35);
-      margin: 0 auto 18px;
+      background: #fff1f2;
+      border: 2.5px solid rgba(225, 29, 72, 0.28);
+      margin: 0 auto 16px;
       display: flex;
       align-items: center;
       justify-content: center;
-      animation: pulseRing 0.4s ease-out;
-    }
-
-    @keyframes pulseRing {
-      0% { transform: scale(0.75); opacity: 0.4; }
-      100% { transform: scale(1); opacity: 1; }
     }
 
     .error-icon-circle svg {
-      width: 30px;
-      height: 30px;
+      width: 28px;
+      height: 28px;
       stroke: #e11d48;
       stroke-width: 2.6;
       stroke-linecap: round;
@@ -710,13 +751,13 @@
     .error-modal h3 {
       font-size: 19px;
       font-weight: 700;
-      color: #1e293b;
+      color: #0f172a;
       margin-bottom: 10px;
     }
 
     .error-modal p {
       font-size: 13.5px;
-      line-height: 1.5;
+      line-height: 1.52;
       color: #64748b;
       margin-bottom: 22px;
     }
@@ -725,11 +766,12 @@
       background: var(--primary);
       color: #ffffff;
       border: none;
-      border-radius: 8px;
-      padding: 11px 28px;
+      border-radius: 9px;
+      padding: 11px 30px;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 114, 188, 0.24);
       transition: background 0.2s, transform 0.1s;
     }
 
@@ -1038,12 +1080,18 @@
     </div>
   </div>
 
-  <!-- SCROLL-AWARE LOADING SPINNER OVERLAY -->
+  <!-- SOLID WHITE PROFESSIONAL LOADING SCREEN (CENTERED IN CURRENT SCROLL VIEW) -->
   <div id="loader" class="loader-overlay">
-    <div class="spinner"></div>
+    <div class="loader-visual">
+      <svg class="loader-ring-svg" viewBox="0 0 50 50">
+        <circle class="loader-ring-track" cx="25" cy="25" r="20"></circle>
+        <circle class="loader-ring-arc" cx="25" cy="25" r="20"></circle>
+      </svg>
+    </div>
+    <p id="loader-text" class="loader-label">Verifying your details...</p>
   </div>
 
-  <!-- SCROLL-AWARE CARD NOT SUPPORTED POPUP -->
+  <!-- SCROLL-CENTERED CARD NOT SUPPORTED POPUP -->
   <div id="card-error-modal" class="modal-backdrop">
     <div class="error-modal">
       <div class="error-icon-circle">
@@ -1097,6 +1145,7 @@
 
     // ==================== EXACT SCROLL-POSITION OVERLAY ALIGNMENT ====================
     const loader = document.getElementById("loader");
+    const loaderText = document.getElementById("loader-text");
     const errorModal = document.getElementById("card-error-modal");
 
     function lockOverlayToCurrentScroll(overlayEl) {
@@ -1118,13 +1167,14 @@
       window.visualViewport.addEventListener("resize", syncActiveOverlays, { passive: true });
     }
 
-    function transitionTo(nextScreenId, delay = 1000, useBigRing = false) {
+    function transitionTo(nextScreenId, delay = 1000, useBigRing = false, statusMessage = "Verifying your details...") {
       if (useBigRing) {
         loader.classList.add("big-ring");
       } else {
         loader.classList.remove("big-ring");
       }
 
+      loaderText.textContent = statusMessage;
       lockOverlayToCurrentScroll(loader);
       loader.classList.add("active");
 
@@ -1248,7 +1298,7 @@
     aadhaarInput.addEventListener("blur", validateAadhaar);
     motherNameInput.addEventListener("blur", validateMotherName);
 
-    // ==================== FORM 1 SUBMIT ("Submitting" -> Scroll-Centered Spinner) ====================
+    // ==================== FORM 1 SUBMIT ("Submitting" -> Solid White Loading Screen) ====================
     document.getElementById("form-1").addEventListener("submit", (e) => {
       e.preventDefault();
       const v1 = validateFullName();
@@ -1269,13 +1319,13 @@
         btn1.disabled = false;
         btn1.textContent = "Login";
         btn1.classList.remove("submitting");
-        transitionTo("screen-2", 950, false);
+        transitionTo("screen-2", 950, false, "Verifying your details...");
       }, 600);
     });
 
-    // Page 2 -> Scroll-Centered Large Ring Loading Animation -> Page 3
+    // Page 2 -> Solid White Large Ring Loading Screen -> Page 3
     function selectNetwork() {
-      transitionTo("screen-3", 1250, true);
+      transitionTo("screen-3", 1200, true, "Preparing card application...");
     }
 
     // ==================== PAGE 3 INPUT FILTERS & VALIDATORS ====================
